@@ -49,34 +49,9 @@ func main() {
 	r.HandleFunc("/cameras/{camera}", DayList)
 	r.HandleFunc("/cameras/{camera}/{day}", HourList)
 	r.HandleFunc("/cameras/{camera}/{day}/{video}/{hour}", ClipList)
-	r.HandleFunc("/cameras/{camera}/{day}/{video}/{hour}/{clip}.mp4", ClipServer)
 	r.HandleFunc("/convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", ClipConverter)
+	r.HandleFunc("/converted/{camera}/{day}/{video}/{hour}/{clip}.mp4", ClipServer)
 	r.HandleFunc("/start-convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", ConvertStart)
-
-	// Statische Dateien aus dem "converted" Ordner bereitstellen, damit der Browser sie abspielen kann
-	r.PathPrefix("/converted/").Handler(http.StripPrefix("/converted/", http.FileServer(http.Dir("./converted"))))
-
-	r.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("test")
-		pageData := PageData{
-			PageTitle: "test",
-			Test:      "blaaa",
-		}
-
-		tmpl := template.Must(template.ParseFiles("templates/basic.html"))
-		tmpl.Execute(w, pageData)
-	})
-
-	r.HandleFunc("/clicked", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("clicked")
-		pageData := PageData{
-			PageTitle: "test",
-			Test:      "blaaa",
-		}
-
-		tmpl := template.Must(template.ParseFiles("templates/test.html"))
-		tmpl.Execute(w, pageData)
-	})
 
 	http.ListenAndServe(":80", r)
 }

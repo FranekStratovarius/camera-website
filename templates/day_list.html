@@ -1,14 +1,18 @@
+{{template "header" .}}
 <h2>Tage von {{.CameraName}}</h2>
+<a href="/">
+	<button>	
+		zurück
+	</button>
+</a>
 <ul>
 	{{range .Days}}
 		<li>
-			<button
-					hx-get="cameras/{{ $.CameraName }}/{{.DayName}}"
-					hx-trigger="click"
-					hx-target="#list"
-					hx-swap="innerHTML">
+			<a href="/cameras/{{ $.CameraName }}/{{.DayName}}">
+				<button>	
 					{{.DayName}}
-			</button>
+				</button>
+			</a>
 		</li>
 	{{end}}
 </ul>

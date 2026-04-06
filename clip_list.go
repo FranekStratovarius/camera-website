@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -15,6 +16,7 @@ type Clip struct {
 	ClipID    string
 	Debug     string
 	Converted bool
+	Time      string
 }
 
 type ClipListPageData struct {
@@ -32,7 +34,7 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 	video := vars["video"]
 	hour := vars["hour"]
 
-	directory := fmt.Sprintf("./camera-recordings/%s/%s/%s/%s", camera, day, video, hour)
+	directory := filepath.Join("./camera-recordings", camera, day, video, hour)
 	hour_directories, err := os.ReadDir(directory)
 	CheckDirectoryError(w, err)
 
@@ -51,8 +53,14 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 				ClipID:   strings.ReplaceAll(cleanClipName, "[M][0@0][0]", ""),
 			}
 
+			times := strings.Split(strings.ReplaceAll(cleanClipName, "[M][0@0][0]", ""), "-")
+			startTimePArts := strings.Split(times[0], ".")
+			endTimeParts := strings.Split(times[1], ".")
+			clip.Time = fmt.Sprintf("%s:%s:%s - %s:%s:%s", startTimePArts[0], startTimePArts[1], startTimePArts[2], endTimeParts[0], endTimeParts[1], endTimeParts[2])
+			fmt.Printf("start time: %+v, end time: %+v\n", times[0], times[1])
+
 			// check other path if File exisis
-			convertedPath := fmt.Sprintf("./converted/%s/%s/%s/%s.mp4", camera, day, hour, cleanClipName)
+			convertedPath := filepath.Join(directory, cleanClipName+".mp4")
 			clip.Debug = convertedPath
 			_, err := os.Stat(convertedPath)
 			if err == nil {
@@ -71,9 +79,7 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 		HourName:   hour,
 		Clips:      clips,
 	}
-	// fmt.Printf("%+v\n", data)
+
 	err = tmpl.ExecuteTemplate(w, "clip_list.html", data)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Fehler beim Ausführen des Templates: %v", err), http.StatusInternalServerError)
-	}
+	CheckTemplateError(w, err)
 }

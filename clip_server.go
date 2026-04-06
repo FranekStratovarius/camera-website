@@ -9,10 +9,6 @@ import (
 )
 
 func ClipServer(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("serve video file")
-	// fmt.Printf("w: %+v\n", w)
-	// fmt.Printf("r: %+v\n", r)
-
 	vars := mux.Vars(r)
 
 	camera := vars["camera"]
@@ -21,10 +17,7 @@ func ClipServer(w http.ResponseWriter, r *http.Request) {
 	hour := vars["hour"]
 	clip := vars["clip"]
 
-	baseDir := "./camera-recordings"
-
-	filePath := filepath.Join(baseDir, camera, day, video, hour, clip)
-	fmt.Printf("VideoPath: %s\n", filePath)
-	// http.ServeFile(w, r, filePath)
-	http.ServeFile(w, r, "./converted/out.mp4")
+	filePath := filepath.Join("./camera-recordings", camera, day, video, hour, clip+".mp4")
+	fmt.Printf("serve video file: %s\n", filePath)
+	http.ServeFile(w, r, filePath)
 }
