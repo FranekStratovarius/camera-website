@@ -27,8 +27,6 @@ func ConvertStart(w http.ResponseWriter, r *http.Request) {
 	hour := vars["hour"]
 	clip := vars["clip"]
 
-	// clipID := strings.ReplaceAll(clip, "[M][0@0][0]", "")
-
 	w.Header().Set("Content-Type", "text/html")
 
 	data := ConvertingPageData{
@@ -44,7 +42,6 @@ func ConvertStart(w http.ResponseWriter, r *http.Request) {
 }
 
 func ClipConverter(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("converting")
 	vars := mux.Vars(r)
 
 	camera := vars["camera"]
@@ -52,8 +49,6 @@ func ClipConverter(w http.ResponseWriter, r *http.Request) {
 	video := vars["video"]
 	hour := vars["hour"]
 	clip := vars["clip"]
-
-	// clipID := strings.ReplaceAll(clip, "[M][0@0][0]", "")
 
 	clipDirectory := filepath.Join("./camera-recordings", camera, day, video, hour)
 
@@ -64,16 +59,12 @@ func ClipConverter(w http.ResponseWriter, r *http.Request) {
 
 	outputPath := filepath.Join(clipDirectory, clip+".mp4")
 
-	fmt.Printf("converting %s into %s\n", inputPath, outputPath)
-
 	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
 		cmd := exec.Command("ffmpeg", "-y", "-i", inputPath, "-c:v", "copy", "-tag:v", "hvc1", outputPath)
-		fmt.Println("converting")
 		err := cmd.Run()
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Fehler bei der Konvertierung: %v", err), http.StatusInternalServerError)
-			fmt.Println(err)
-			return
+			panic(err)
 		}
 	}
 

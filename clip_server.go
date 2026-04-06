@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"path/filepath"
 
@@ -18,6 +17,5 @@ func ClipServer(w http.ResponseWriter, r *http.Request) {
 	clip := vars["clip"]
 
 	filePath := filepath.Join("./camera-recordings", camera, day, video, hour, clip+".mp4")
-	fmt.Printf("serve video file: %s\n", filePath)
 	http.ServeFile(w, r, filePath)
 }

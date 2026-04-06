@@ -41,7 +41,6 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 
 	var clips []Clip
 	for _, clip := range hour_directories {
-		fmt.Println(clip.Name())
 
 		matched, _ := regexp.MatchString(".*\\.dav", clip.Name())
 		if matched {
@@ -58,7 +57,6 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 			startTimePArts := strings.Split(times[0], ".")
 			endTimeParts := strings.Split(times[1], ".")
 			clip.Time = fmt.Sprintf("%s:%s:%s - %s:%s:%s", startTimePArts[0], startTimePArts[1], startTimePArts[2], endTimeParts[0], endTimeParts[1], endTimeParts[2])
-			fmt.Printf("start time: %+v, end time: %+v\n", times[0], times[1])
 
 			// check other path if File exisis
 			convertedPath := filepath.Join(directory, cleanClipName+".mp4")
@@ -74,7 +72,6 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dayNameParts := strings.Split(day, "-")
-	fmt.Printf("day name parts: %+v\n", dayNameParts)
 	dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
 
 	data := ClipListPageData{

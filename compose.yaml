@@ -1,0 +1,10 @@
+services:
+  webserver:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 8080:80
+    volumes:
+      - ./camera-recordings:/app/camera-recordings
+    restart: always

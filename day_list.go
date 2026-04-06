@@ -29,14 +29,12 @@ func DayList(w http.ResponseWriter, r *http.Request) {
 
 	var days []Day
 	for _, day := range days_directories {
-		fmt.Println(day.Name())
 		directory := fmt.Sprintf("./camera-recordings/%s/%s", camera, day.Name())
 		fileInfo, err := os.Stat(directory)
 		CheckDirectoryError(w, err)
 
 		if fileInfo.IsDir() {
 			dayNameParts := strings.Split(day.Name(), "-")
-			fmt.Printf("day name parts: %+v\n", dayNameParts)
 			dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
 
 			days = append(days, Day{

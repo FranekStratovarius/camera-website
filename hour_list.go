@@ -32,7 +32,6 @@ func HourList(w http.ResponseWriter, r *http.Request) {
 
 	var hours []Hour
 	for _, video := range video_directories {
-		fmt.Println(video.Name())
 		directory := fmt.Sprintf("./camera-recordings/%s/%s/%s", camera, day, video.Name())
 		fileInfo, err := os.Stat(directory)
 		CheckDirectoryError(w, err)
@@ -42,7 +41,6 @@ func HourList(w http.ResponseWriter, r *http.Request) {
 			CheckDirectoryError(w, err)
 
 			for _, hour := range video_directories {
-				fmt.Println(hour.Name())
 				directory := fmt.Sprintf("./camera-recordings/%s/%s/%s/%s", camera, day, video.Name(), hour.Name())
 				fileInfo, err := os.Stat(directory)
 				CheckDirectoryError(w, err)
@@ -58,7 +56,6 @@ func HourList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dayNameParts := strings.Split(day, "-")
-	fmt.Printf("day name parts: %+v\n", dayNameParts)
 	dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
 
 	data := HourListPageData{
