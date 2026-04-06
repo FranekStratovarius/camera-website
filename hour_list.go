@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -14,9 +15,10 @@ type Hour struct {
 }
 
 type HourListPageData struct {
-	CameraName string
-	DayName    string
-	Hours      []Hour
+	CameraName       string
+	DayName          string
+	DayNameFormatted string
+	Hours            []Hour
 }
 
 func HourList(w http.ResponseWriter, r *http.Request) {
@@ -55,10 +57,15 @@ func HourList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	dayNameParts := strings.Split(day, "-")
+	fmt.Printf("day name parts: %+v\n", dayNameParts)
+	dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
+
 	data := HourListPageData{
-		CameraName: camera,
-		DayName:    day,
-		Hours:      hours,
+		CameraName:       camera,
+		DayName:          day,
+		DayNameFormatted: dayNameFormatted,
+		Hours:            hours,
 	}
 
 	err = tmpl.ExecuteTemplate(w, "hour_list.html", data)

@@ -1,18 +1,15 @@
 {{template "header" .}}
-<h2>Tage von {{.CameraName}}</h2>
-<a href="/">
-	<button>	
-		zurück
-	</button>
-</a>
-<ul>
+<div class="d-flex justify-content-between align-items-center mb-3">
+	<h2 class="mb-0">Tage von {{.CameraName}}</h2>
+	<a class="btn btn-secondary" href="/">
+			zurück
+	</a>
+</div>
+<ul class="list-group">
 	{{range .Days}}
-		<li>
-			<a href="/cameras/{{ $.CameraName }}/{{.DayName}}">
-				<button>	
-					{{.DayName}}
-				</button>
-			</a>
-		</li>
+		<a class="list-group-item" href="/cameras/{{ $.CameraName }}/{{.DayName}}">
+			{{.DayNameFormatted}}
+		</a>
 	{{end}}
 </ul>
+{{template "footer" .}}

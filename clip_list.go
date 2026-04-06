@@ -20,11 +20,12 @@ type Clip struct {
 }
 
 type ClipListPageData struct {
-	CameraName string
-	DayName    string
-	VideoName  string
-	HourName   string
-	Clips      []Clip
+	CameraName       string
+	DayName          string
+	DayNameFormatted string
+	VideoName        string
+	HourName         string
+	Clips            []Clip
 }
 
 func ClipList(w http.ResponseWriter, r *http.Request) {
@@ -72,12 +73,17 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	dayNameParts := strings.Split(day, "-")
+	fmt.Printf("day name parts: %+v\n", dayNameParts)
+	dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
+
 	data := ClipListPageData{
-		CameraName: camera,
-		DayName:    day,
-		VideoName:  video,
-		HourName:   hour,
-		Clips:      clips,
+		CameraName:       camera,
+		DayName:          day,
+		DayNameFormatted: dayNameFormatted,
+		VideoName:        video,
+		HourName:         hour,
+		Clips:            clips,
 	}
 
 	err = tmpl.ExecuteTemplate(w, "clip_list.html", data)

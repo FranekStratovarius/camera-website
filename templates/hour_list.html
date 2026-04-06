@@ -1,18 +1,15 @@
 {{template "header" .}}
-<h2>Stunden von {{.DayName}}</h2>
-<a href="/cameras/{{ $.CameraName }}">
-	<button>	
-		zurück
-	</button>
-</a>
-<ul>
+<div class="d-flex justify-content-between align-items-center mb-3">
+	<h2 class="mb-0">Stunden von {{.DayNameFormatted}}</h2>
+	<a class="btn btn-secondary" href="/cameras/{{ $.CameraName }}">
+			zurück
+	</a>
+</div>
+<ul class="list-group">
 	{{range .Hours}}
-		<li>
-			<a href="/cameras/{{ $.CameraName }}/{{ $.DayName }}/{{.VideoDirectory}}/{{.HourName}}">
-				<button>	
-					{{.HourName}}
-				</button>
-			</a>
-		</li>
+		<a class="list-group-item" href="/cameras/{{ $.CameraName }}/{{ $.DayName }}/{{.VideoDirectory}}/{{.HourName}}">
+			{{.HourName}} Uhr
+		</a>
 	{{end}}
 </ul>
+{{template "footer" .}}

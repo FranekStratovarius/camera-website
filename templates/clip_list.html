@@ -1,17 +1,19 @@
 {{template "header" .}}
-<h2>{{.DayName}} {{.HourName}}</h2>
-<a href="/cameras/{{ $.CameraName }}/{{ $.DayName }}">
-	<button>	
-		zurück
-	</button>
-</a>
-<ul>
+<div class="d-flex justify-content-between align-items-center mb-3">
+	<h2 class="mb-0">{{.DayNameFormatted}} um {{.HourName}} Uhr</h2>
+	<a class="btn btn-secondary" href="/cameras/{{ $.CameraName }}/{{.DayName}}">
+			zurück
+	</a>
+</div>
+
+<ul class="list-group">
 	{{range $index, $clip := .Clips}}
-	<li>
+	<div class="list-group-item">
 		{{ .Time }}
 		<div id="vid-{{$index}}">
 			{{ if eq .Converted false }}
 				<button
+					class="btn btn-primary"
 					hx-get="/start-convert/{{ $.CameraName }}/{{ $.DayName }}/{{ $.VideoName }}/{{ $.HourName }}/{{$clip.ClipName}}.mp4"
 					hx-trigger="click"
 					hx-target="#vid-{{$index}}"
@@ -24,6 +26,6 @@
 				</video>
 			{{ end }}
 		</div>
-	</li>
+	</div>
 	{{end}}
 </ul>

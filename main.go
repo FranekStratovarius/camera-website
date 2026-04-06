@@ -53,5 +53,7 @@ func main() {
 	r.HandleFunc("/converted/{camera}/{day}/{video}/{hour}/{clip}.mp4", ClipServer)
 	r.HandleFunc("/start-convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", ConvertStart)
 
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
 	http.ListenAndServe(":80", r)
 }

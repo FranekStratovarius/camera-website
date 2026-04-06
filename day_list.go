@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
 
 type Day struct {
-	DayName string
+	DayName          string
+	DayNameFormatted string
 }
 
 type DayListPageData struct {
@@ -33,7 +35,14 @@ func DayList(w http.ResponseWriter, r *http.Request) {
 		CheckDirectoryError(w, err)
 
 		if fileInfo.IsDir() {
-			days = append(days, Day{DayName: day.Name()})
+			dayNameParts := strings.Split(day.Name(), "-")
+			fmt.Printf("day name parts: %+v\n", dayNameParts)
+			dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
+
+			days = append(days, Day{
+				DayName:          day.Name(),
+				DayNameFormatted: dayNameFormatted,
+			})
 		}
 	}
 
