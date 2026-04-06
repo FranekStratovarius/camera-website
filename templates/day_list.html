@@ -1,0 +1,14 @@
+<h2>Tage von {{.CameraName}}</h2>
+<ul>
+	{{range .Days}}
+		<li>
+			<button
+					hx-get="cameras/{{ $.CameraName }}/{{.DayName}}"
+					hx-trigger="click"
+					hx-target="#list"
+					hx-swap="innerHTML">
+					{{.DayName}}
+			</button>
+		</li>
+	{{end}}
+</ul>

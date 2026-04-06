@@ -1,0 +1,14 @@
+<h2>Stunden von {{.DayName}}</h2>
+<ul>
+	{{range .Hours}}
+		<li>
+			<button
+					hx-get="cameras/{{ $.CameraName }}/{{ $.DayName }}/{{.VideoDirectory}}/{{.HourName}}"
+					hx-trigger="click"
+					hx-target="#list"
+					hx-swap="innerHTML">
+					{{.HourName}}
+			</button>
+		</li>
+	{{end}}
+</ul>

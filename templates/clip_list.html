@@ -1,0 +1,22 @@
+<h2>{{.DayName}} {{.HourName}}</h2>
+<ul>
+	{{range $index, $clip := .Clips}}
+	<li>
+		{{/*  <a href="cameras/{{ $.CameraName }}/{{ $.DayName }}/{{ $.VideoName }}/{{ $.HourName }}/{{.ClipName}}">{{.ClipName}}</a>  */}}
+		{{ if eq .Converted false }}
+			<button
+				hx-get="/start-convert/{{ $.CameraName }}/{{ $.DayName }}/{{ $.VideoName }}/{{ $.HourName }}/{{$clip.ClipName}}.mp4"
+				hx-trigger="click"
+				hx-target="#vid-{{$index}}"
+				hx-swap="outerHTML">
+				Konvertiere
+			</button>
+		{{ end }}
+	</li>
+	<video id="vid-{{$index}}" width="100%" controls>
+		{{ if eq .Converted true }}
+			<source src="/converted/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{$clip.ClipName}}.mp4" type="video/mp4">
+		{{ end }}
+	</video>
+	{{end}}
+</ul>
