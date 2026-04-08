@@ -1,8 +1,10 @@
 package main
 
 import (
+	"crypto/subtle"
 	"fmt"
 	"net/http"
+	"os"
 	"text/template"
 
 	"github.com/gorilla/mux"
@@ -42,16 +44,39 @@ func init() {
 	tmpl = template.Must(template.ParseGlob("templates/*.html"))
 }
 
+func passwordAuth(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// r.BasicAuth() liest die Header aus. Den Usernamen (_) ignorieren wir.
+		_, password, ok := r.BasicAuth()
+		fmt.Printf("password: %s\n", password)
+		fmt.Printf("ok: %t\n", ok)
+		fmt.Printf("password match: %s\n", os.Getenv("PASSWORD"))
+
+		// Sicherheits-Feature: subtle.ConstantTimeCompare verhindert sogenannte "Timing-Attacken".
+		// Es vergleicht die Strings immer in der exakt gleichen Zeit, egal ob das Passwort
+		// beim ersten oder letzten Zeichen falsch ist.
+		if !ok || subtle.ConstantTimeCompare([]byte(password), []byte(os.Getenv("PASSWORD"))) != 1 {
+			// Trigger für das Browser-Pop-up
+			w.Header().Set("WWW-Authenticate", `Basic realm="Restricted Area", charset="UTF-8"`)
+			http.Error(w, "Zugriff verweigert", http.StatusUnauthorized)
+			return
+		}
+
+		// Passwort ist korrekt -> Weiter zur eigentlichen Funktion
+		next.ServeHTTP(w, r)
+	}
+}
+
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", CameraList)
-	r.HandleFunc("/cameras/{camera}", DayList)
-	r.HandleFunc("/cameras/{camera}/{day}", HourList)
-	r.HandleFunc("/cameras/{camera}/{day}/{video}/{hour}", ClipList)
-	r.HandleFunc("/convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", ClipConverter)
-	r.HandleFunc("/converted/{camera}/{day}/{video}/{hour}/{clip}.mp4", ClipServer)
-	r.HandleFunc("/start-convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", ConvertStart)
+	r.HandleFunc("/", passwordAuth(CameraList))
+	r.HandleFunc("/cameras/{camera}", passwordAuth(DayList))
+	r.HandleFunc("/cameras/{camera}/{day}", passwordAuth(HourList))
+	r.HandleFunc("/cameras/{camera}/{day}/{video}/{hour}", passwordAuth(ClipList))
+	r.HandleFunc("/convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", passwordAuth(ClipConverter))
+	r.HandleFunc("/converted/{camera}/{day}/{video}/{hour}/{clip}.mp4", passwordAuth(ClipServer))
+	r.HandleFunc("/start-convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", passwordAuth(ConvertStart))
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
