@@ -6,5 +6,5 @@ services:
     ports:
       - 8080:80
     volumes:
-      - ./camera-recordings:/app/camera-recordings
+      - ${CAMERA_RECORDINGS}:/app/camera-recordings
     restart: always

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -29,21 +30,25 @@ func DayList(w http.ResponseWriter, r *http.Request) {
 
 	var days []Day
 	for _, day := range days_directories {
-		directory := fmt.Sprintf("./camera-recordings/%s/%s", camera, day.Name())
+		dayName := day.Name()
+		directory := fmt.Sprintf("./camera-recordings/%s/%s", camera, dayName)
 		fileInfo, err := os.Stat(directory)
 		CheckDirectoryError(w, err)
 
 		if fileInfo.IsDir() {
-			dayNameParts := strings.Split(day.Name(), "-")
-			dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
+			if dayName[:1] != `$` {
+				dayNameParts := strings.Split(dayName, "-")
+				dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
 
-			days = append(days, Day{
-				DayName:          day.Name(),
-				DayNameFormatted: dayNameFormatted,
-			})
+				days = append(days, Day{
+					DayName:          dayName,
+					DayNameFormatted: dayNameFormatted,
+				})
+			}
 		}
 	}
 
+	slices.Reverse(days)
 	data := DayListPageData{
 		CameraName: camera,
 		Days:       days,
