@@ -48,9 +48,6 @@ func passwordAuth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// r.BasicAuth() liest die Header aus. Den Usernamen (_) ignorieren wir.
 		_, password, ok := r.BasicAuth()
-		fmt.Printf("password: %s\n", password)
-		fmt.Printf("ok: %t\n", ok)
-		fmt.Printf("password match: %s\n", os.Getenv("PASSWORD"))
 
 		// Sicherheits-Feature: subtle.ConstantTimeCompare verhindert sogenannte "Timing-Attacken".
 		// Es vergleicht die Strings immer in der exakt gleichen Zeit, egal ob das Passwort
@@ -73,10 +70,11 @@ func main() {
 	r.HandleFunc("/", passwordAuth(CameraList))
 	r.HandleFunc("/cameras/{camera}", passwordAuth(DayList))
 	r.HandleFunc("/cameras/{camera}/{day}", passwordAuth(HourList))
-	r.HandleFunc("/cameras/{camera}/{day}/{video}/{hour}", passwordAuth(ClipList))
-	r.HandleFunc("/convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", passwordAuth(ClipConverter))
-	r.HandleFunc("/converted/{camera}/{day}/{video}/{hour}/{clip}.mp4", passwordAuth(ClipServer))
-	r.HandleFunc("/start-convert/{camera}/{day}/{video}/{hour}/{clip}.mp4", passwordAuth(ConvertStart))
+	r.HandleFunc("/cameras/{camera}/{day}/{hour}", passwordAuth(ClipList))
+	r.HandleFunc("/convert/{camera}/{day}/{hour}/{clip}.mp4", passwordAuth(ClipConverter))
+	r.HandleFunc("/converted/{camera}/{day}/{hour}/{clip}.mp4", passwordAuth(ClipServer))
+	r.HandleFunc("/images/{camera}/{day}/{hour}/{image}.jpg", passwordAuth(ImageServer))
+	r.HandleFunc("/start-convert/{camera}/{day}/{hour}/{clip}.mp4", passwordAuth(ConvertStart))
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 

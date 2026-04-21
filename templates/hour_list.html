@@ -7,7 +7,7 @@
 </div>
 <ul class="list-group">
 	{{range .Hours}}
-		<a class="list-group-item" href="/cameras/{{ $.CameraName }}/{{ $.DayName }}/{{.VideoDirectory}}/{{.HourName}}">
+		<a class="list-group-item" href="/cameras/{{ $.CameraName }}/{{ $.DayName }}/{{.HourName}}">
 			{{.HourName}} Uhr
 		</a>
 	{{end}}

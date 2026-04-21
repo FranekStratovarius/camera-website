@@ -19,23 +19,27 @@ type Clip struct {
 	Time      string
 }
 
+type Image struct {
+	ImageName string
+	Time      string
+}
+
 type ClipListPageData struct {
 	CameraName       string
 	DayName          string
 	DayNameFormatted string
-	VideoName        string
 	HourName         string
 	Clips            []Clip
+	Images           []Image
 }
 
 func ClipList(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	camera := vars["camera"]
 	day := vars["day"]
-	video := vars["video"]
 	hour := vars["hour"]
 
-	directory := filepath.Join("./camera-recordings", camera, day, video, hour)
+	directory := filepath.Join("./camera-recordings", camera, day, "video_001", hour)
 	hour_directories, err := os.ReadDir(directory)
 	CheckDirectoryError(w, err)
 
@@ -54,9 +58,9 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 			}
 
 			times := strings.Split(strings.ReplaceAll(cleanClipName, "[M][0@0][0]", ""), "-")
-			startTimePArts := strings.Split(times[0], ".")
+			startTimeParts := strings.Split(times[0], ".")
 			endTimeParts := strings.Split(times[1], ".")
-			clip.Time = fmt.Sprintf("%s:%s:%s - %s:%s:%s", startTimePArts[0], startTimePArts[1], startTimePArts[2], endTimeParts[0], endTimeParts[1], endTimeParts[2])
+			clip.Time = fmt.Sprintf("%s:%s:%s - %s:%s:%s", startTimeParts[0], startTimeParts[1], startTimeParts[2], endTimeParts[0], endTimeParts[1], endTimeParts[2])
 
 			// check other path if File exisis
 			convertedPath := filepath.Join(directory, cleanClipName+".mp4")
@@ -71,6 +75,24 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	directory = filepath.Join("./camera-recordings", camera, day, "pic_001", hour)
+	image_directory, err := os.ReadDir(directory)
+	CheckDirectoryError(w, err)
+
+	var images []Image
+	for _, image := range image_directory {
+		imageCleanName := strings.TrimSuffix(image.Name(), ".jpg")
+		imageCleanName = strings.ReplaceAll(imageCleanName, "[M][0@0][0]", "")
+		imageTimeParts := strings.Split(imageCleanName, ".")
+		time := fmt.Sprintf("%s:%s:%s", imageTimeParts[0], imageTimeParts[1], imageTimeParts[2])
+
+		image := Image{
+			ImageName: imageCleanName,
+			Time:      time,
+		}
+		images = append(images, image)
+	}
+
 	dayNameParts := strings.Split(day, "-")
 	dayNameFormatted := fmt.Sprintf("%s.%s.%s", dayNameParts[2], dayNameParts[1], dayNameParts[0])
 
@@ -78,9 +100,9 @@ func ClipList(w http.ResponseWriter, r *http.Request) {
 		CameraName:       camera,
 		DayName:          day,
 		DayNameFormatted: dayNameFormatted,
-		VideoName:        video,
 		HourName:         hour,
 		Clips:            clips,
+		Images:           images,
 	}
 
 	err = tmpl.ExecuteTemplate(w, "clip_list.html", data)

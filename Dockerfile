@@ -7,7 +7,7 @@ RUN go mod download
 # copy source code
 COPY *.go ./
 # build
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/ueberwachungskamera-server
+RUN CGO_ENABLED=0 GOOS=linux go build -v -a -installsuffix cgo -o /app/ueberwachungskamera-server
 
 FROM alpine:3.23
 

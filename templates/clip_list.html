@@ -6,6 +6,18 @@
 	</a>
 </div>
 
+<div class="d-flex flex-nowrap overflow-x-auto mb-4 pb-2 gap-2">
+	{{range $image := .Images}}
+		<div class="flex-shrink-0">
+			<a href="/images/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{ $image.ImageName }}.jpg">
+				<img src="/images/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{ $image.ImageName }}.jpg" class="img-thumbnail" style="height: 200px; width: auto; object-fit: cover;">
+			</a>
+			<br>
+			{{ $image.Time }}
+		</div>
+	{{end}}
+</div>
+
 <ul class="list-group">
 	{{range $index, $clip := .Clips}}
 	<div class="list-group-item">
@@ -14,7 +26,7 @@
 			{{ if eq .Converted false }}
 				<button
 					class="btn btn-primary"
-					hx-get="/start-convert/{{ $.CameraName }}/{{ $.DayName }}/{{ $.VideoName }}/{{ $.HourName }}/{{$clip.ClipName}}.mp4"
+					hx-get="/start-convert/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{$clip.ClipName}}.mp4"
 					hx-trigger="click"
 					hx-target="#vid-{{$index}}"
 					hx-swap="outerHTML">
@@ -22,7 +34,7 @@
 				</button>
 			{{ else }}
 				<video width="100%" controls>
-					<source src="/converted/{{ $.CameraName }}/{{ $.DayName }}/{{ $.VideoName }}/{{ $.HourName }}/{{$clip.ClipName}}.mp4" type="video/mp4">
+					<source src="/converted/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{$clip.ClipName}}.mp4" type="video/mp4">
 				</video>
 			{{ end }}
 		</div>

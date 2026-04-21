@@ -10,8 +10,7 @@ import (
 )
 
 type Hour struct {
-	HourName       string
-	VideoDirectory string
+	HourName string
 }
 
 type HourListPageData struct {
@@ -26,32 +25,20 @@ func HourList(w http.ResponseWriter, r *http.Request) {
 	camera := vars["camera"]
 	day := vars["day"]
 
-	directory := fmt.Sprintf("./camera-recordings/%s/%s", camera, day)
-	video_directories, err := os.ReadDir(directory)
+	directory := fmt.Sprintf("./camera-recordings/%s/%s/video_001", camera, day)
+	hours_directories, err := os.ReadDir(directory)
 	CheckDirectoryError(w, err)
 
 	var hours []Hour
-	for _, video := range video_directories {
-		directory := fmt.Sprintf("./camera-recordings/%s/%s/%s", camera, day, video.Name())
+	for _, hour := range hours_directories {
+		directory := fmt.Sprintf("./camera-recordings/%s/%s/video_001/%s", camera, day, hour.Name())
 		fileInfo, err := os.Stat(directory)
 		CheckDirectoryError(w, err)
 
 		if fileInfo.IsDir() {
-			video_directories, err := os.ReadDir(directory)
-			CheckDirectoryError(w, err)
-
-			for _, hour := range video_directories {
-				directory := fmt.Sprintf("./camera-recordings/%s/%s/%s/%s", camera, day, video.Name(), hour.Name())
-				fileInfo, err := os.Stat(directory)
-				CheckDirectoryError(w, err)
-
-				if fileInfo.IsDir() {
-					hours = append(hours, Hour{
-						HourName:       hour.Name(),
-						VideoDirectory: video.Name(),
-					})
-				}
-			}
+			hours = append(hours, Hour{
+				HourName: hour.Name(),
+			})
 		}
 	}
 

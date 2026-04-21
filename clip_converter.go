@@ -13,7 +13,6 @@ import (
 type ConvertingPageData struct {
 	CameraName string
 	DayName    string
-	VideoName  string
 	HourName   string
 	ClipName   string
 }
@@ -23,7 +22,6 @@ func ConvertStart(w http.ResponseWriter, r *http.Request) {
 
 	camera := vars["camera"]
 	day := vars["day"]
-	video := vars["video"]
 	hour := vars["hour"]
 	clip := vars["clip"]
 
@@ -32,7 +30,6 @@ func ConvertStart(w http.ResponseWriter, r *http.Request) {
 	data := ConvertingPageData{
 		CameraName: camera,
 		DayName:    day,
-		VideoName:  video,
 		HourName:   hour,
 		ClipName:   clip,
 	}
@@ -46,11 +43,10 @@ func ClipConverter(w http.ResponseWriter, r *http.Request) {
 
 	camera := vars["camera"]
 	day := vars["day"]
-	video := vars["video"]
 	hour := vars["hour"]
 	clip := vars["clip"]
 
-	clipDirectory := filepath.Join("./camera-recordings", camera, day, video, hour)
+	clipDirectory := filepath.Join("./camera-recordings", camera, day, "video_001", hour)
 
 	inputPath := filepath.Join(clipDirectory, clip+".dav")
 	if _, err := os.Stat(inputPath); os.IsNotExist(err) {
@@ -71,7 +67,6 @@ func ClipConverter(w http.ResponseWriter, r *http.Request) {
 	data := ConvertingPageData{
 		CameraName: camera,
 		DayName:    day,
-		VideoName:  video,
 		HourName:   hour,
 		ClipName:   clip,
 	}
