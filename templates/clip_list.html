@@ -9,8 +9,8 @@
 <div class="d-flex flex-nowrap overflow-x-auto mb-4 pb-2 gap-2">
 	{{range $image := .Images}}
 		<div class="flex-shrink-0">
-			<a href="/images/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{ $image.ImageName }}.jpg">
-				<img src="/images/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{ $image.ImageName }}.jpg" class="img-thumbnail" style="height: 200px; width: auto; object-fit: cover;">
+			<a href="/images/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{ $image.ImageName }}.jpg" target="_blank" title="Full Image">
+				<img src="/thumbnails/{{ $.CameraName }}/{{ $.DayName }}/{{ $.HourName }}/{{ $image.ImageName }}.jpg" class="img-thumbnail" style="height: 200px; width: auto; object-fit: cover;" loading="lazy" alt="Preview">
 			</a>
 			<br>
 			{{ $image.Time }}

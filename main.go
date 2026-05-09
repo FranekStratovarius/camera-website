@@ -76,6 +76,7 @@ func main() {
 	r.HandleFunc("/convert/{camera}/{day}/{hour}/{clip}.mp4", passwordAuth(ClipConverter))
 	r.HandleFunc("/converted/{camera}/{day}/{hour}/{clip}.mp4", passwordAuth(ClipServer))
 	r.HandleFunc("/images/{camera}/{day}/{hour}/{image}.jpg", passwordAuth(ImageServer))
+	r.HandleFunc("/thumbnails/{camera}/{day}/{hour}/{image}.jpg", passwordAuth(ThumbnailServer))
 	r.HandleFunc("/start-convert/{camera}/{day}/{hour}/{clip}.mp4", passwordAuth(ConvertStart))
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))

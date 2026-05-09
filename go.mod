@@ -2,4 +2,7 @@ module FranekStratovarius/camera-website
 
 go 1.26.1
 
-require github.com/gorilla/mux v1.8.1
+require (
+	github.com/gorilla/mux v1.8.1
+	golang.org/x/image v0.40.0
+)
